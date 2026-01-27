@@ -1,0 +1,21 @@
+@media print {
+  .no-print,
+  .d-print-none {
+    display: none !important;
+  }
+
+  .d-print-block {
+    display: block !important;
+  }
+
+  body {
+    direction: rtl; /* لضمان اتجاه الصفحة من اليمين لليسار في الطباعة */
+    padding: 0;
+    margin: 0;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+}
