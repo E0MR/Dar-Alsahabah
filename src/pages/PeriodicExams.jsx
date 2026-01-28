@@ -198,7 +198,6 @@ const PeriodicExams = () => {
         </Col>
       </Row>
 
-      {/* مودال التقييم الجديد */}
       <Modal isOpen={modal} toggle={toggleModal} centered dir="rtl">
         <ModalHeader toggle={toggleModal} className="border-0 fw-bold">إضافة تقييم دوري جديد</ModalHeader>
         <Form onSubmit={handleAddSession}>
@@ -206,6 +205,7 @@ const PeriodicExams = () => {
             <FormGroup>
               <Label>عنوان الاختبار (مثال: اختبار شهر مارس 2025)</Label>
               <Input
+                name="session-title"
                 required
                 value={newSessionData.title}
                 onChange={e => setNewSessionData({ ...newSessionData, title: e.target.value })}
@@ -215,6 +215,7 @@ const PeriodicExams = () => {
             <FormGroup>
               <Label>التاريخ</Label>
               <Input
+                name="session-date"
                 type="date"
                 value={newSessionData.date}
                 onChange={e => setNewSessionData({ ...newSessionData, date: e.target.value })}
@@ -228,7 +229,6 @@ const PeriodicExams = () => {
         </Form>
       </Modal>
 
-      {/* مودال تعديل الاختبار */}
       <Modal isOpen={editModal} toggle={() => setEditModal(false)} centered dir="rtl">
         <ModalHeader toggle={() => setEditModal(false)} className="border-0 fw-bold">تعديل بيانات الاختبار</ModalHeader>
         <Form onSubmit={handleSaveEdit}>
@@ -236,6 +236,7 @@ const PeriodicExams = () => {
             <FormGroup>
               <Label>عنوان الاختبار</Label>
               <Input
+                name="edit-session-title"
                 required
                 value={editSessionData.title}
                 onChange={e => setEditSessionData({ ...editSessionData, title: e.target.value })}
@@ -244,6 +245,7 @@ const PeriodicExams = () => {
             <FormGroup>
               <Label>التاريخ</Label>
               <Input
+                name="edit-session-date"
                 type="date"
                 value={editSessionData.date}
                 onChange={e => setEditSessionData({ ...editSessionData, date: e.target.value })}
@@ -265,7 +267,6 @@ const PeriodicExams = () => {
         message="هل أنت متأكد من حذف هذا الاختبار؟ سيؤدي ذلك لحذف جميع الدرجات المرتبطة به نهائياً."
       />
 
-      {/* --- Hidden Batch Print Component --- */}
       <div style={{ position: 'absolute', top: '-10000px', left: '-10000px', width: '210mm' }}>
         <div ref={batchRef}>
           {classes.map(cls => {

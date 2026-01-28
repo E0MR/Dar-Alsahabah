@@ -7,7 +7,6 @@ import ActionButtons from "../components/ActionButtons";
 import GenericModal from "../components/common/GenericModal";
 
 const Dashboard = () => {
-  // useLiveQuery automatically tracks changes in the DB and rerenders
   const counts = useLiveQuery(async () => {
     const [cCount, sCount, stCount] = await Promise.all([
       db.classes.count(),
@@ -21,7 +20,6 @@ const Dashboard = () => {
   const [modalMessage, setModalMessage] = useState("");
   const [modalTitle, setModalTitle] = useState("");
 
-  // Prepare the display data based on the live query result
   const stats = [
     {
       title: "الفصول الدراسية",

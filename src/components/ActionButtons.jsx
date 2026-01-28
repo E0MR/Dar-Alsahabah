@@ -16,7 +16,7 @@ const ActionButtons = ({ onExport, onImport }) => (
       style={{ cursor: "pointer" }}
     >
       <MdOutlineUpload size={22} /> استيراد نسخة
-      <input type="file" hidden onChange={onImport} accept=".json" />
+      <input name="import-file" type="file" hidden onChange={onImport} accept=".json" />
     </label>
   </div>
 );

@@ -1,14 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap");
 
 :root {
-  /* الوضع الفاتح - ألوان هادئة واحترافية */
   --bg-color: #f8fafc;
   --card-bg: #ffffff;
   --text-main: #1e293b;
   --primary-color: #4834d4;
   --nav-bg: rgba(255, 255, 255, 0.85);
   --border-color: #e2e8f0;
-  /* لون فاصل أخف وأجمل */
 }
 
 [data-theme="dark"] {
@@ -19,7 +17,6 @@
   --nav-bg: rgba(15, 23, 42, 0.95);
   --border-color: #334155;
 
-  /* Bootstrap Global Variable Overrides */
   --bs-body-bg: var(--bg-color);
   --bs-body-color: var(--text-main);
   --bs-card-bg: var(--card-bg);
@@ -33,10 +30,8 @@
   --bs-modal-header-border-color: var(--border-color);
   --bs-modal-footer-border-color: var(--border-color);
   --bs-secondary-color: #94a3b8;
-  /* text-muted fallback */
 }
 
-/* --- Dark Mode Utility Overrides --- */
 [data-theme="dark"] body {
   color: var(--text-main) !important;
 }
@@ -142,7 +137,6 @@ body {
   min-height: 100vh;
 }
 
-/* --- تحسين شكل الـ Navbar --- */
 .navbar {
   background-color: var(--nav-bg) !important;
   backdrop-filter: blur(12px);
@@ -197,22 +191,17 @@ body {
   color: var(--text-main) !important;
 }
 
-/* --- تحسين البطاقات --- */
 .card {
   background-color: var(--card-bg) !important;
   border: 1px solid var(--border-color) !important;
   border-radius: 20px !important;
-  /* box-shadow handled via bootstrap class or custom below if needed */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   color: var(--text-main) !important;
-  /* Force text color inheritance */
 }
 
-/* Fix Bootstrap Inputs in Dark Mode */
 [data-theme="dark"] .form-control,
 [data-theme="dark"] .form-select {
   background-color: #334155;
-  /* Slightly lighter than card bg */
   border-color: var(--border-color);
   color: var(--text-main);
 }
@@ -229,19 +218,15 @@ body {
   color: #94a3b8;
 }
 
-/* Fix Modal Close Button in Dark Mode */
 [data-theme="dark"] .btn-close {
   filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-/* Specific fix for select elements visibility */
-/* (already handled in utility block) */
 
 .text-primary {
   color: var(--primary-color) !important;
 }
 
-/* Global card hover removed to prevent unwanted movement on tables/forms */
 .card {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
@@ -270,16 +255,11 @@ body,
   flex-grow: 1;
   display: flex;
   align-items: center;
-  /* Center vertically if desired, or 'stretch' */
   flex-direction: column;
-  /* Ensure content stacks properly */
   justify-content: flex-start;
-  /* Start from top */
   padding-top: 100px;
-  /* زيادة المسافة لتجنب تداخل النافبار الثابت */
 }
 
-/* Fix bg-light redundant rule removed */
 
 .card-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -292,7 +272,6 @@ body,
 
 @media print {
   @page {
-    /* size handled dynamically via react-to-print */
     margin: 5mm;
   }
 
@@ -324,16 +303,13 @@ body,
     overflow: visible !important;
   }
 
-  /* Force table to fit */
   table {
     width: 100% !important;
     min-width: auto !important;
-    /* Override min-width */
     table-layout: fixed !important;
     border-collapse: collapse !important;
   }
 
-  /* White background for headers and cells */
   thead th,
   tbody td,
   .bg-primary,
@@ -346,13 +322,11 @@ body,
     border: 1px solid black !important;
   }
 
-  /* Make header text bold and black */
   thead th {
     font-weight: bold !important;
     border-bottom: 2px solid black !important;
   }
 
-  /* For Empty Table Print: Hide text content in specific cells */
   .print-empty-grades tbody td:not(:nth-child(2)):not(:first-child) input {
     display: none !important;
   }
@@ -361,7 +335,6 @@ body,
     color: transparent !important;
   }
 
-  /* Hide input styling */
   input {
     border: none !important;
     background: transparent !important;
@@ -371,7 +344,6 @@ body,
     width: 100% !important;
   }
 
-  /* Adjust font size for print to fit more columns */
   body,
   table {
     font-size: 12px !important;
@@ -403,7 +375,6 @@ body,
   outline: none;
 }
 
-/* Mobile Optimizations */
 @media (max-width: 768px) {
   .display-6 {
     font-size: 2rem;
@@ -427,7 +398,6 @@ body,
     box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
   }
 
-  /* Custom scrollbar for mobile tables */
   .table-responsive::-webkit-scrollbar {
     height: 4px;
   }

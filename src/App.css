@@ -9,7 +9,7 @@
   }
 
   body {
-    direction: rtl; /* لضمان اتجاه الصفحة من اليمين لليسار في الطباعة */
+    direction: rtl;
     padding: 0;
     margin: 0;
   }

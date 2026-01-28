@@ -38,12 +38,10 @@ const Students = () => {
   const [grades, setGrades] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // حالات المودالات
   const [modal, setModal] = useState(false);
   const [certModal, setCertModal] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  // Confirmation state
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [targetDeleteId, setTargetDeleteId] = useState(null);
 
@@ -106,7 +104,6 @@ const Students = () => {
   const confirmDelete = async () => {
     if (targetDeleteId) {
       await db.students.delete(targetDeleteId);
-      // Clean up grades for this student
       await db.grades.where({ studentId: targetDeleteId }).delete();
       fetchData();
     }
@@ -117,7 +114,6 @@ const Students = () => {
     documentTitle: `شهادة - ${selectedStudent?.name}`,
   });
 
-  // تصفية الطلاب بناءً على البحث
   const filteredStudents = students.filter((s) =>
     s.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
@@ -135,12 +131,12 @@ const Students = () => {
         </Button>
       </div>
 
-      {/* شريط البحث */}
       <Card className="border-0 shadow-sm mb-4 rounded-4">
         <CardBody className="p-3">
           <div className="d-flex align-items-center bg-light px-3 py-2 rounded-pill">
             <MdSearch size={24} className="text-muted ms-2" />
             <Input
+              name="search-student"
               type="text"
               placeholder="ابحث عن طالب بالاسم..."
               className="border-0 bg-transparent shadow-none"
@@ -151,7 +147,6 @@ const Students = () => {
         </CardBody>
       </Card>
 
-      {/* جدول الطلاب */}
       <Card className="border-0 shadow-sm rounded-4 overflow-hidden">
         <Table hover responsive className="text-center align-middle m-0">
           <thead className="table-dark">
@@ -215,7 +210,6 @@ const Students = () => {
         </Table>
       </Card>
 
-      {/* مودال الإضافة/التعديل */}
       <Modal isOpen={modal} toggle={toggleModal} centered dir="rtl">
         <ModalHeader toggle={toggleModal}>بيانات الطالب</ModalHeader>
         <Form onSubmit={handleSave}>
@@ -223,6 +217,7 @@ const Students = () => {
             <FormGroup>
               <Label>اسم الطالب</Label>
               <Input
+                name="student-name"
                 required
                 value={formData.name}
                 onChange={(e) =>
@@ -235,6 +230,7 @@ const Students = () => {
                 <FormGroup>
                   <Label>رقم ولي الأمر 1</Label>
                   <Input
+                    name="student-phone1"
                     value={formData.phone1}
                     onChange={(e) =>
                       setFormData({ ...formData, phone1: e.target.value })
@@ -246,6 +242,7 @@ const Students = () => {
                 <FormGroup>
                   <Label>رقم ولي الأمر 2</Label>
                   <Input
+                    name="student-phone2"
                     value={formData.phone2}
                     onChange={(e) =>
                       setFormData({ ...formData, phone2: e.target.value })
@@ -257,6 +254,7 @@ const Students = () => {
             <FormGroup>
               <Label>الفصل</Label>
               <Input
+                name="student-class"
                 type="select"
                 required
                 value={formData.classId}
@@ -284,7 +282,6 @@ const Students = () => {
         </Form>
       </Modal>
 
-      {/* مودال الشهادة (Certificate) */}
       <Modal
         isOpen={certModal}
         toggle={() => setCertModal(false)}
@@ -335,7 +332,6 @@ const Students = () => {
                     return cls?.subjectIds && cls.subjectIds.includes(sub.id);
                   })
                   .map((sub) => {
-                    // حساب مجموع درجات المادة (سواء كانت أجزاء أو كلي)
                     const studentGrades = grades.filter(
                       (g) =>
                         g.studentId === selectedStudent?.id &&

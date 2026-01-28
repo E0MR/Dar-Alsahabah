@@ -25,7 +25,6 @@ const Subjects = () => {
   const [modal, setModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
 
-  // Confirm Modal State
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [targetDeleteId, setTargetDeleteId] = useState(null);
 
@@ -41,7 +40,6 @@ const Subjects = () => {
 
   const [formData, setFormData] = useState(initialFormState);
 
-  // جلب البيانات
   const loadSubjects = useCallback(async () => {
     try {
       const data = await db.subjects.toArray();
@@ -182,7 +180,6 @@ const Subjects = () => {
         )}
       </Row>
 
-      {/* مودال الإضافة والتعديل */}
       <Modal isOpen={modal} toggle={toggle} centered dir="rtl">
         <ModalHeader toggle={toggle} className="border-0 fw-bold">
           إعداد المادة
@@ -192,6 +189,7 @@ const Subjects = () => {
             <FormGroup>
               <Label className="small fw-bold">اسم المادة</Label>
               <Input
+                name="subject-name"
                 required
                 value={formData.name}
                 onChange={(e) =>
@@ -202,6 +200,7 @@ const Subjects = () => {
             <FormGroup>
               <Label className="small fw-bold">الدرجة النهائية</Label>
               <Input
+                name="max-grade"
                 type="number"
                 required
                 value={formData.maxGrade}
@@ -215,6 +214,7 @@ const Subjects = () => {
               <div className="d-flex gap-3 p-2 bg-light rounded-3">
                 <Label check className="mb-0">
                   <Input
+                    name="paper-count"
                     type="radio"
                     checked={formData.paperCount === 1}
                     onChange={() => setFormData({ ...formData, paperCount: 1 })}
@@ -223,6 +223,7 @@ const Subjects = () => {
                 </Label>
                 <Label check className="mb-0">
                   <Input
+                    name="paper-count"
                     type="radio"
                     checked={formData.paperCount === 2}
                     onChange={() => setFormData({ ...formData, paperCount: 2 })}
@@ -239,6 +240,7 @@ const Subjects = () => {
                     <FormGroup className="mb-md-0">
                       <Label className="small fw-bold">اسم الورقة الأولى</Label>
                       <Input
+                        name="paper1-name"
                         required
                         value={formData.paper1Name}
                         onChange={(e) =>
@@ -251,6 +253,7 @@ const Subjects = () => {
                     <FormGroup className="mb-0">
                       <Label className="small fw-bold">اسم الورقة الثانية</Label>
                       <Input
+                        name="paper2-name"
                         required
                         value={formData.paper2Name}
                         onChange={(e) =>
@@ -265,6 +268,7 @@ const Subjects = () => {
 
             <FormGroup switch className="mt-4">
               <Input
+                name="is-main"
                 type="switch"
                 checked={formData.isMain}
                 onChange={() =>

@@ -35,7 +35,6 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
     <>
       <Navbar expand="lg" fixed="top" className="shadow-sm bg-navbar py-2">
         <Container fluid="lg" className="d-flex justify-content-between align-items-center">
-          {/* Brand */}
           <NavbarBrand
             tag={Link}
             to="/"
@@ -49,7 +48,6 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
             دار الصحابة
           </NavbarBrand>
 
-          {/* Desktop Navigation */}
           <Nav navbar className="d-none d-lg-flex flex-row gap-2">
             {navLinks.map((link) => (
               <NavItem key={link.path}>
@@ -71,12 +69,11 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
             ))}
           </Nav>
 
-          {/* Right Side Actions */}
           <div className="d-flex align-items-center gap-2 gap-md-3">
-            {/* Session Selector (Desktop Only) */}
             <div className="d-none d-md-flex align-items-center gap-2 bg-light px-3 py-1 rounded-pill border">
               <MdEventNote className="text-primary" />
               <select
+                name="active-session-desktop"
                 className="bg-transparent border-0 small fw-bold shadow-none cursor-pointer"
                 style={{ outline: 'none' }}
                 value={activeSessionId}
@@ -89,7 +86,6 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
               </select>
             </div>
 
-            {/* Theme Toggle */}
             <Button
               onClick={toggleTheme}
               color="link"
@@ -108,7 +104,6 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
               )}
             </Button>
 
-            {/* Mobile Toggler */}
             <NavbarToggler onClick={toggle} className="border-0 shadow-none d-lg-none">
               <div className="navbar-toggler-icon"></div>
             </NavbarToggler>
@@ -116,7 +111,6 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
         </Container>
       </Navbar>
 
-      {/* Mobile Menu (Offcanvas) */}
       <Offcanvas
         isOpen={isOpen}
         toggle={toggle}
@@ -133,12 +127,12 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
           </div>
         </OffcanvasHeader>
         <OffcanvasBody>
-          {/* Mobile Session Selector */}
           <div className="d-md-none mb-4">
             <label className="small text-muted mb-2 d-block">الاختبار النشط:</label>
             <div className="d-flex align-items-center gap-2 bg-light px-3 py-2 rounded-3 border">
               <MdEventNote className="text-primary" />
               <select
+                name="active-session-mobile"
                 className="bg-transparent border-0 flex-grow-1 fw-bold shadow-none cursor-pointer"
                 style={{ outline: 'none' }}
                 value={activeSessionId}
@@ -155,7 +149,6 @@ const CustomNavbar = ({ theme, toggleTheme }) => {
             </div>
           </div>
 
-          {/* Mobile Links */}
           <Nav vertical className="gap-2">
             {navLinks.map((link) => (
               <NavItem key={link.path}>

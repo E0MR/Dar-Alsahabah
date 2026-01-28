@@ -38,7 +38,6 @@ const ClassDetails = () => {
 
     const id = parseInt(classId);
 
-    // --- Queries ---
     const cls = useLiveQuery(() => db.classes.get(id), [id]);
     const students = useLiveQuery(
         () => db.students.where({ classId: classId }).toArray(),
@@ -50,17 +49,14 @@ const ClassDetails = () => {
         [activeSessionId]
     );
 
-    // --- State ---
     const [subjectModal, setSubjectModal] = useState(false);
     const [selectedSubjects, setSelectedSubjects] = useState([]);
 
-    // Student Edit/Delete State (Local to this page for quick actions)
     const [studentModal, setStudentModal] = useState(false);
     const [studentForm, setStudentForm] = useState({ name: "", phone1: "", phone2: "" });
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [targetStudentId, setTargetStudentId] = useState(null);
 
-    // Printing
     const tableRef = useRef();
     const [isPrintingEmpty, setIsPrintingEmpty] = useState(false);
 
@@ -110,14 +106,12 @@ const ClassDetails = () => {
         }, 100);
     };
 
-    // --- Derived Data ---
     if (!cls || !students || !allSubjects || !grades) return <div className="p-5 text-center">جاري التحميل...</div>;
 
     const classSubjects = allSubjects.filter(s => cls.subjectIds?.includes(s.id));
     const basicSubjects = classSubjects.filter(s => s.isMain);
     const additionalSubjects = classSubjects.filter(s => !s.isMain);
 
-    // --- Handlers ---
     const openSubjectModal = () => {
         setSelectedSubjects(cls.subjectIds || []);
         setSubjectModal(true);
@@ -136,7 +130,6 @@ const ClassDetails = () => {
         );
     };
 
-    // Student CRUD (Quick)
     const handleEditStudent = (st) => {
         setStudentForm(st);
         setStudentModal(true);
@@ -154,23 +147,17 @@ const ClassDetails = () => {
 
     const confirmDeleteStudent = async () => {
         await db.students.delete(targetStudentId);
-        // Clean up grades for this student
         await db.grades.where({ studentId: targetStudentId }).delete();
     };
 
-    // --- Helper to get grade ---
     const getGrade = (studentId, subjectId, paper = null) => {
-        // Find grades for this student and subject
         const studentGrades = grades.filter(g => g.studentId === studentId && g.subjectId === subjectId);
 
-        // If query specific paper
         if (paper) {
             const grade = studentGrades.find(g => g.paper === paper);
             return grade ? grade.score : "";
         }
 
-        // If no paper specified (simple subject), return first score or sum? 
-        // For simple subjects, we assume just one entry or paper=null
         const grade = studentGrades.find(g => !g.paper);
         return grade ? grade.score : "";
     };
@@ -178,9 +165,7 @@ const ClassDetails = () => {
     const handleGradeChange = async (studentId, subjectId, value, paper = null) => {
         const score = parseFloat(value);
         if (isNaN(score)) {
-            // If empty or invalid, maybe delete? For now just ignore or save null
             if (value === "") {
-                // Find and delete
                 if (paper) {
                     await db.grades.where({ studentId, subjectId, paper, sessionId: activeSessionId }).delete();
                 } else {
@@ -190,12 +175,10 @@ const ClassDetails = () => {
             return;
         }
 
-        // Check if grade exists for THIS student, THIS subject, and THIS session
         let collection = db.grades.where({ sessionId: activeSessionId, studentId, subjectId });
         if (paper) {
             collection = collection.filter(g => g.paper === paper);
         } else {
-            // For simple subjects, we usually don't have a paper property or it's null
             collection = collection.filter(g => !g.paper);
         }
 
@@ -208,13 +191,12 @@ const ClassDetails = () => {
                 studentId,
                 subjectId,
                 score,
-                paper, // can be null or 1/2
+                paper,
                 sessionId: activeSessionId
             });
         }
     };
 
-    // --- Certificate Calculation Logic ---
     const studentStats = (students || []).map(st => {
         let total = 0;
         basicSubjects.forEach(sub => {
@@ -231,10 +213,8 @@ const ClassDetails = () => {
         return { ...st, total };
     });
 
-    // Sort by total descending to find top 3
     const sortedStats = [...studentStats].sort((a, b) => b.total - a.total);
 
-    // Total Max Grade Calculation
     const totalMaxGrade = basicSubjects.reduce((sum, s) => sum + (s.maxGrade || 0), 0) +
         additionalSubjects.reduce((sum, s) => sum + (s.maxGrade || 0), 0);
 
@@ -256,7 +236,6 @@ const ClassDetails = () => {
 
     return (
         <Container fluid className="p-3 p-md-4">
-            {/* Header & Toolbar */}
             <Row className="mb-4">
                 <Col className="d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div className="d-flex align-items-center gap-3">
@@ -305,7 +284,6 @@ const ClassDetails = () => {
                 </Col>
             </Row>
 
-            {/* Grade Sheet Table */}
             <Card className="border-0 shadow-sm rounded-4 overflow-hidden">
                 <CardBody className="p-0">
                     <div className={`table-responsive ${isPrintingEmpty ? 'print-empty-grades' : ''}`} ref={tableRef}>
@@ -345,7 +323,6 @@ const ClassDetails = () => {
                                     </th>
                                 </tr>
                                 <tr>
-                                    {/* Basic Subjects Sub-headers (only for 2-paper subjects) */}
                                     {basicSubjects.map(sub => (
                                         sub.paperCount === 2 ? (
                                             <React.Fragment key={sub.id}>
@@ -355,7 +332,6 @@ const ClassDetails = () => {
                                         ) : null
                                     ))}
 
-                                    {/* Additional Subjects Sub-headers */}
                                     {additionalSubjects.map(sub => (
                                         sub.paperCount === 2 ? (
                                             <React.Fragment key={sub.id}>
@@ -365,7 +341,6 @@ const ClassDetails = () => {
                                         ) : null
                                     ))}
 
-                                    {/* Actions Sub-headers */}
                                     <th className="d-print-none bg-light text-dark small py-1" style={{ width: '50px' }}>تعديل</th>
                                     <th className="d-print-none bg-light text-dark small py-1" style={{ width: '50px' }}>حذف</th>
                                 </tr>
@@ -377,39 +352,37 @@ const ClassDetails = () => {
                                             <td>{idx + 1}</td>
                                             <td className="fw-bold text-start ps-3 text-truncate">{st.name}</td>
 
-                                            {/* Basic Subjects Grades */}
                                             {basicSubjects.map(sub => {
                                                 if (sub.paperCount === 2) {
                                                     const g1 = getGrade(st.id, sub.id, 1);
                                                     const g2 = getGrade(st.id, sub.id, 2);
                                                     return (
                                                         <React.Fragment key={sub.id}>
-                                                            <td className="p-0"><input className="grade-input" defaultValue={g1} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 1)} /></td>
-                                                            <td className="p-0"><input className="grade-input" defaultValue={g2} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 2)} /></td>
+                                                            <td className="p-0"><input name={`grade-${st.id}-${sub.id}-1`} className="grade-input" defaultValue={g1} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 1)} /></td>
+                                                            <td className="p-0"><input name={`grade-${st.id}-${sub.id}-2`} className="grade-input" defaultValue={g2} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 2)} /></td>
                                                         </React.Fragment>
                                                     );
                                                 } else {
                                                     const g = getGrade(st.id, sub.id);
-                                                    return <td key={sub.id} className="p-0"><input className="grade-input" defaultValue={g} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value)} /></td>;
+                                                    return <td key={sub.id} className="p-0"><input name={`grade-${st.id}-${sub.id}`} className="grade-input" defaultValue={g} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value)} /></td>;
                                                 }
                                             })}
 
                                             <td className="fw-bold bg-light">{st.total}</td>
 
-                                            {/* Additional Subjects Grades */}
                                             {additionalSubjects.map(sub => {
                                                 if (sub.paperCount === 2) {
                                                     const g1 = getGrade(st.id, sub.id, 1);
                                                     const g2 = getGrade(st.id, sub.id, 2);
                                                     return (
                                                         <React.Fragment key={sub.id}>
-                                                            <td className="p-0"><input className="grade-input" defaultValue={g1} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 1)} /></td>
-                                                            <td className="p-0"><input className="grade-input" defaultValue={g2} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 2)} /></td>
+                                                            <td className="p-0"><input name={`grade-add-${st.id}-${sub.id}-1`} className="grade-input" defaultValue={g1} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 1)} /></td>
+                                                            <td className="p-0"><input name={`grade-add-${st.id}-${sub.id}-2`} className="grade-input" defaultValue={g2} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value, 2)} /></td>
                                                         </React.Fragment>
                                                     );
                                                 } else {
                                                     const g = getGrade(st.id, sub.id);
-                                                    return <td key={sub.id} className="p-0"><input className="grade-input" defaultValue={g} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value)} /></td>;
+                                                    return <td key={sub.id} className="p-0"><input name={`grade-add-${st.id}-${sub.id}`} className="grade-input" defaultValue={g} onBlur={(e) => handleGradeChange(st.id, sub.id, e.target.value)} /></td>;
                                                 }
                                             })}
 
@@ -428,9 +401,7 @@ const ClassDetails = () => {
                 </CardBody>
             </Card>
 
-            {/* --- Modals --- */}
 
-            {/* Subject Management Modal */}
             <GenericModal
                 isOpen={subjectModal}
                 toggle={() => setSubjectModal(!subjectModal)}
@@ -446,6 +417,7 @@ const ClassDetails = () => {
                     {allSubjects?.map((sub) => (
                         <div key={sub.id} className="form-check form-check-inline m-0 bg-light p-2 rounded border" style={{ minWidth: '130px' }}>
                             <Input
+                                name={`class-subject-${sub.id}`}
                                 type="checkbox"
                                 id={`d-sub-${sub.id}`}
                                 className="form-check-input ms-2"
@@ -460,7 +432,6 @@ const ClassDetails = () => {
                 </div>
             </GenericModal>
 
-            {/* Quick Edit Student Modal */}
             <GenericModal
                 isOpen={studentModal}
                 toggle={() => setStudentModal(false)}
@@ -470,25 +441,25 @@ const ClassDetails = () => {
                 <Form>
                     <FormGroup>
                         <Label>الاسم</Label>
-                        <Input value={studentForm.name} onChange={e => setStudentForm({ ...studentForm, name: e.target.value })} />
+                        <Input name="student-edit-name" value={studentForm.name} onChange={e => setStudentForm({ ...studentForm, name: e.target.value })} />
                     </FormGroup>
                     <Row>
                         <Col md={6}>
                             <FormGroup>
                                 <Label>رقم ولي الأمر 1</Label>
-                                <Input value={studentForm.phone1 || ''} onChange={e => setStudentForm({ ...studentForm, phone1: e.target.value })} />
+                                <Input name="student-edit-phone1" value={studentForm.phone1 || ''} onChange={e => setStudentForm({ ...studentForm, phone1: e.target.value })} />
                             </FormGroup>
                         </Col>
                         <Col md={6}>
                             <FormGroup>
                                 <Label>رقم ولي الأمر 2</Label>
-                                <Input value={studentForm.phone2 || ''} onChange={e => setStudentForm({ ...studentForm, phone2: e.target.value })} />
+                                <Input name="student-edit-phone2" value={studentForm.phone2 || ''} onChange={e => setStudentForm({ ...studentForm, phone2: e.target.value })} />
                             </FormGroup>
                         </Col>
                     </Row>
                     <FormGroup>
                         <Label>ملاحظات</Label>
-                        <Input type="textarea" value={studentForm.notes || ''} onChange={e => setStudentForm({ ...studentForm, notes: e.target.value })} />
+                        <Input name="student-edit-notes" type="textarea" value={studentForm.notes || ''} onChange={e => setStudentForm({ ...studentForm, notes: e.target.value })} />
                     </FormGroup>
                 </Form>
             </GenericModal>
@@ -500,36 +471,29 @@ const ClassDetails = () => {
                 title="حذف الطالب"
             />
 
-            {/* --- Hidden Certificate Component --- */}
             <div style={{ position: 'absolute', top: '-10000px', left: '-10000px', width: '210mm' }}>
                 <div ref={certsRef} className="print-certs">
                     {sortedStats.map((st) => (
                         <div key={st.id} className="cert-container d-flex flex-column justify-content-between text-black">
-                            {/* Top Section */}
                             <div className="d-flex justify-content-between align-items-start mb-2">
-                                {/* Left: Dar Name */}
                                 <div className="text-start fw-bold fs-5" style={{ width: '150px' }}>
                                     دار الصحابة
                                 </div>
 
-                                {/* Center: Exam Name */}
                                 <div className="text-center pt-2">
                                     <h3 className="fw-bold mb-0">{activeSession ? activeSession.title : `اختبار ${cls.title}`}</h3>
                                 </div>
 
-                                {/* Right: Rank Icon & Text */}
                                 <div style={{ width: '150px', fontSize: '18px' }} className="text-end fw-bold">
                                     {getRankIcon(st.id)} {getRankText(st.id)}
                                 </div>
                             </div>
 
-                            {/* Student Info */}
                             <div className="d-flex justify-content-between align-items-center mb-2">
                                 <span className="fw-bold" style={{ fontSize: '2.2em' }}>الطالب: {st.name}</span>
                                 <span className="fw-bold fs-4">الفصل: {cls.title}</span>
                             </div>
 
-                            {/* Marks Table */}
                             <table className="table table-bordered border-dark text-center mb-0" style={{ fontSize: '12px' }}>
                                 <thead>
                                     <tr className="bg-light">
@@ -564,7 +528,6 @@ const ClassDetails = () => {
                                     </tr>
                                 </tbody>
                             </table>
-                            {/* Signature / Footer spacing */}
                             <div className="mt-2 text-center text-muted small">
                                 مع تمنياتنا بالتوفيق
                             </div>

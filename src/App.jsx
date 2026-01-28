@@ -3,10 +3,9 @@ import "bootstrap/dist/css/bootstrap.rtl.min.css";
 import { Routes, Route } from "react-router-dom";
 import "./index.css";
 import Layout from "./components/Layout";
-// import CustomNavbar from "./components/CustomNavbar"; // Removed direct usage
 import Subjects from "./pages/Subjects";
 import PeriodicExams from "./pages/PeriodicExams";
-import Dashboard from "./pages/Dashboard"; // سننشئ هذا المكون الآن
+import Dashboard from "./pages/Dashboard";
 import Classes from "./pages/Classes";
 import ClassDetails from "./pages/ClassDetails";
 import Students from "./pages/Students";
@@ -15,13 +14,11 @@ import { SessionProvider } from "./context/SessionContext";
 function App() {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
-  // تحديث الثيم
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // دالة تبديل الثيم تمرر إلى الـ Layout
   const toggleTheme = () => setTheme((t) => (t === "light" ? "dark" : "light"));
 
   return (

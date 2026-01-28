@@ -5,9 +5,8 @@ import { db } from "../db";
 const PeriodicExams = () => {
   const [students, setStudents] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [grades, setGrades] = useState({}); // لتخزين الدرجات مؤقتاً {studentId-subjectId: score}
+  const [grades, setGrades] = useState({});
 
-  // جلب البيانات الأساسية
   useEffect(() => {
     const fetchData = async () => {
       const allStudents = await db.students.toArray();
@@ -18,17 +17,22 @@ const PeriodicExams = () => {
     fetchData();
   }, []);
 
-  // تحديث الدرجة في قاعدة البيانات
   const handleGradeChange = async (studentId, subjectId, score) => {
-    // منطق الحفظ في IndexedDB
     await db.grades.put({
-      sessionId: 1, // سنغيره لاحقاً ليكون ديناميكياً
+      sessionId: 1,
       studentId,
       subjectId,
       score: Number(score),
     });
-    // تحديث الحالة محلياً لسرعة العرض
+
     setGrades((prev) => ({ ...prev, [`${studentId}-${subjectId}`]: score }));
+  };
+
+  const calculateTotal = (studentId) => {
+    return subjects.reduce((sum, sub) => {
+      const grade = grades[`${studentId}-${sub.id}`];
+      return sum + (Number(grade) || 0);
+    }, 0);
   };
 
   return (
@@ -56,16 +60,17 @@ const PeriodicExams = () => {
                 <td key={sub.id} style={{ width: "100px" }}>
                   <Input
                     type="number"
+                    name={`grade-${student.id}-${sub.id}`}
                     placeholder="-"
                     className="text-center border-0"
+                    value={grades[`${student.id}-${sub.id}`] || ""}
                     onChange={(e) =>
                       handleGradeChange(student.id, sub.id, e.target.value)
                     }
                   />
                 </td>
               ))}
-              <td className="fw-bold text-primary">0</td>{" "}
-              {/* سيتم حساب المجموع تلقائياً */}
+              <td className="fw-bold text-primary">{calculateTotal(student.id)}</td>{" "}
             </tr>
           ))}
         </tbody>
@@ -73,3 +78,5 @@ const PeriodicExams = () => {
     </Container>
   );
 };
+
+export default PeriodicExams;
